@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import com.example.android.navigation.databinding.FragmentTitleBinding
 
 
@@ -20,14 +21,17 @@ class TitleFragment : Fragment() {
                 container,   //set of LayoutParams values for root car attachToParent=false
                 false  // If hierarchy should be attached to the parent parameter
         )
+
+        binding.playButton.setOnClickListener { view : View ->
+            view.findNavController().navigate(R.id.action_titleFragment_to_gameFragment)
+        }
+
         return binding.root
-     /*   attacher le fragment à activity_main.xml en insérant:
-        <fragment
-        android:id="@+id/titleFragment"
-        android:name="com.example.android.navigation.TitleFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+     /*  dans main_activity
+             android:name="com.example.android.navigation.TitleFragment"
+            est maintenant remplacé par le graphe de navigation
+             android:name="androidx.navigation.fragment.NavHostFragment"
+             qui pointe TitelFragment comme départ de la navigation
       */
     }
 

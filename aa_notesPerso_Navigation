@@ -1,5 +1,5 @@
 
-==> Création navidation entre Layouts
+1 ==> Création  Layout de navigation
 
 	1 - clique droit sur "app/res"
 	2 - cliquer sur android "ressources files"
@@ -13,7 +13,135 @@
 			
 ==> Résultat:
  	 1 - Un répertoire "navigation" est créé dans app/res"
-	 2 - Un fichier "naviagation.xml" est créeé dans ce répertoire
+	 2 - Un fichier "navigation.xml" est créeé dans ce répertoire
 	 
 	 NOTA. Un message d'erreur "Unused Naviagtion" apparâit car la naviagation n'est pas
 	 		encore implémentée
+			
+ 2 ==> Création gestionnaire de navigation: classe NavHostFragment, selon la doc:
+ 
+ 	"NavHostFragment provides an area within your layout for self-contained navigation to occur."
+	
+ 3 ==> Création graphe de navigation: classe navGraph, selon la doc:
+ 
+ 	"NavGraph is a collection of NavDestination nodes fetchable by ID.
+      A NavGraph serves as a 'virtual' destination: while the NavGraph itself will not appear on
+	  the back stack, navigating to the NavGraph will cause the starting destination to be added
+	  to the back stack."
+		
+   Pour cela, dans " <fragment> inclus dans "LinearLyout" de "main_activity.xml"iL faut:
+
+	a -remplacer la ligne: 
+	android:name="com.example.android.navigation.TitleFragment"
+	par:
+	android:name="androidx.navigation.fragment.NavHostFragment"
+		 
+	b - 
+	ajouter la ligne:
+	app:navGraph="@navigation/navigation"
+	
+ 4 ==> Ajouter destination de navigation:
+ 
+ 	1 - ouvrir "res/navigation/navigation.xml"
+	2 - Dansla barre d'outils en haut à gauche du cadre "design":
+			a -cliquer sur le bouton "+"
+			b - dans la boite de dialogue s'ouvre une liste des fragments vers lesquels on peut
+				naviguer choisir un fragment: dans notre exemple on séléctionne "fragment_title"
+				NOTA. 
+				Dans la liste les noms sont ceux des ficchiers xml
+				une fois choisi, le nom de la destination qui apparait est l'id du fragment
+				
+		==>	Résultat:
+
+	--> le cadre destination "titleFragment" apparait dans le cadre des sélections
+	--> dans "navigation.xml" est ajouté le fragment ici:
+	
+		<fragment
+        android:id="@+id/titleFragment"
+        android:name="com.example.android.navigation.TitleFragment"
+        android:label="fragment_title"
+        tools:layout="@layout/fragment_title" />
+		
+		==> Dans notre exemple on ajoute à la navigation le fragment: "fragment_game" 
+		
+		    ==> résultat : 
+				--> le cadre "gameFragement" apparait dans le cadre des sélections
+				--> dans "navigation.xml" est ajouté le fragment "gameFragment"
+			
+ 5 ==>  Dans le cadre des sélections placer les cadres destination dans l'odre de navigation
+ 		souhaité (ici titleFragment à gauche et gameFragment à sa gauche sans chevauchement)
+		
+ 6 ==> Liaison des navigations.
+ 
+ 		a - dans le cadre des fragements sélectionnés
+		     - cliquer sur le fragment de départ: 
+			 		- il devient encadré en bleu
+					- un petit rond apparait sur le bord droit
+		b - cliquer sur le petit rond
+			-maintenir le bouton de la souris appuyé
+			-tirer le trait qui apparait vers le segment de destination (gameFragment)
+			
+			==> résultat:
+				Dans "res/navigation/navigation.xml"
+					rubrique <fragment ...>
+					est ajoutée une rubrique "action":
+					
+			<action
+            android:id="@+id/action_titleFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+			
+		-->	En cliquant sur le trait de navigation reliant les 2 fragments en mode "design"
+			apparait les attributs de l'objet "action" = trait de liaison
+			l'id de cet objet est:
+			android:id="@+id/action_titleFragment_to_gameFragment"
+			
+ 7 ==> Gestion de la liaison = "action"	par évènement onClick
+ 
+ 		a - dans le code kotlin du fragment de départ "TitelFragment.kt":
+			dans la fonction "onCreateView" insérer le code:
+			
+	binding.playButton.setOnClickListener { view : View ->
+       view.findNavController().navigate(R.id.action_titleFragment_to_gameFragment)
+	}			
+	
+	concernant findNavController la doc dit:
+	
+	"Find a NavController given a local Fragment.
+	  This method will locate the NavController associated with this Fragment, looking first for
+	  a NavHostFragment along the given Fragment's parent chain. If a NavController is not found,
+	  this method will look for one along this Fragment's view hierarchy as specified by
+	  Navigation.findNavController(View)."
+	
+ 8 ==> Pile de navigation.
+ 
+ 	Les fragments successifs sont empilés dans "back stack", on revient arrière en suivant l'ordre
+	d'insertion dans la pile par le bouton "back" d'android
+	--> Si on veut modifier l'ordre de retour arrière, par exemple de
+		"gameOverFragemnt" vers "titleFragemen" 
+		  il faut insérer dans
+		  <action
+            android:id="@+id/action_gameFragment_to_gameOverFragment"
+            app:destination="@id/gameOverFragment">
+			
+			les deux lignes:
+			
+			app:popUpTo="@id/titleFragment"
+            app:popUpToInclusive="false" /> (aller à titleFragement)
+			
+			on peut aussi insérer à la place:
+			
+			app:popUpTo="@id/gameFragment"
+            app:popUpToInclusive="true" />  (skip gameFragment inclus)
+			
+	--> Cela peut être fait graphiquement dans le designe:
+		a - cliquer sur la liaison "gameFragment_to_gameOverFragement"
+		b - dans les attributs ouvrir "Pop Behaviour"
+		c - sélectionner le fragment de destination pour "popUpTo"
+		    - laisser "popUpToInclusive" à false
+			ou
+			sélectioner le fragment à sauter pou "popUpTo"et mettre "popUpToInclusive" à true
+	
+	
+	
+ 
+ 	
