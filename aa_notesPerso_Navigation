@@ -1,0 +1,19 @@
+
+==> Création navidation entre Layouts
+
+	1 - clique droit sur "app/res"
+	2 - cliquer sur android "ressources files"
+	2 - Dans boite de dialogue
+			a - Dans "File name": taper un nom
+			b - dans "Resources Type" sélectionner "Navigation"			
+			c - "Root element" rempi par le système (read only)
+			d - "Source set" laisser à "main"
+			e - "Directory name" laisser "navigation" par défault
+			f - "Choosen qualifies" laisser vide
+			
+==> Résultat:
+ 	 1 - Un répertoire "navigation" est créé dans app/res"
+	 2 - Un fichier "naviagation.xml" est créeé dans ce répertoire
+	 
+	 NOTA. Un message d'erreur "Unused Naviagtion" apparâit car la naviagation n'est pas
+	 		encore implémentée
